@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://github.com/lavalink-devs/Lavalink/releases/tag/4.0.0
+HostUrl=https://objects.githubusercontent.com/github-production-release-asset-2e65be/97382188/0f74fb6a-e936-45a8-a5da-c138d19d3073?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20231213%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20231213T164735Z&X-Amz-Expires=300&X-Amz-Signature=f4dbb46719eb19ab13817acffdffe1fa37bd45a8be90d4803757529ca788b7cc&X-Amz-SignedHeaders=host&actor_id=65512800&key_id=0&repo_id=97382188&response-content-disposition=attachment%3B%20filename%3DLavalink.jar&response-content-type=application%2Foctet-stream
