@@ -146,12 +146,15 @@ async def disconnect(ctx: commands.Context) -> None:
 
 #------------------------------------------------------------------------# Slash commands
 
-@bot.tree.command(name="test6")
+@bot.tree.command(name="test")
 async def test(interaction : discord.Interaction):
     await interaction.response.send_message("This works")
 
-@bot.tree.command(name="toggle_pause_or_resume")
+@bot.tree.command(name="toggle_music")
 async def s_pause_resume(interaction : discord.Interaction):
+    """
+        Pause or resume the playing of sound
+    """
 
     player = cast(wavelink.Player, interaction.guild.voice_client)
     if not player:
@@ -161,11 +164,18 @@ async def s_pause_resume(interaction : discord.Interaction):
 
     await interaction.response.send_message("toggled pause/resume")
 
-@bot.tree.command(name="custom_sound_controls")
+@bot.tree.command(name="sound_controls")
 @app_commands.describe(pitch = "pitch")
 @app_commands.describe(speed = "speed")
 @app_commands.describe(rate = "rate")
 async def s_play(interaction : discord.Interaction, pitch:int = 1,speed:int = 1,rate:int = 1):
+    """
+    Control the following variables:
+    pitch,
+    Speed,
+    rate.
+    
+    """
     player = cast(wavelink.Player, interaction.guild.voice_client)
 
     filters: wavelink.Filters = player.filters
@@ -176,6 +186,9 @@ async def s_play(interaction : discord.Interaction, pitch:int = 1,speed:int = 1,
 
 @bot.tree.command(name="nightcore")
 async def nightcore(interaction : discord.Interaction):
+    """
+        Sets the pitch and speed to 1.2x normal
+    """
 
     player = cast(wavelink.Player, interaction.guild.voice_client)
 
@@ -187,6 +200,9 @@ async def nightcore(interaction : discord.Interaction):
 
 @bot.tree.command(name="sync")
 async def s_sync(interaction : discord.Interaction):
+    """
+        Used to sync new commands (Admin tool)
+    """
     try:
         synced = await bot.tree.sync()
         _logger.info(f"synced {len(synced)} commands")
@@ -198,6 +214,9 @@ async def s_sync(interaction : discord.Interaction):
 
 @bot.tree.command(name="disconnect")
 async def s_disconnect(interaction : discord.Interaction):
+    """
+        Disconnect the bot 
+    """
     player = cast(wavelink.Player, interaction.guild.voice_client)
 
     if not player:
@@ -207,6 +226,9 @@ async def s_disconnect(interaction : discord.Interaction):
 
 @bot.tree.command(name="skip")
 async def s_skip(interaction : discord.Interaction):
+    """
+        Skip current song
+    """
     player = cast(wavelink.Player, interaction.guild.voice_client)
 
     if not player:
@@ -221,6 +243,9 @@ async def s_skip(interaction : discord.Interaction):
 @bot.tree.command(name="play")
 @app_commands.describe(query = "query")
 async def s_play(interaction : discord.Interaction, query:str):
+    """
+        Play a song from youtube or soundcloud
+    """
 
     player: wavelink.Player
     player = cast(wavelink.Player, interaction.guild.voice_client) 
