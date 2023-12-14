@@ -4,6 +4,7 @@ from typing import cast
 
 import discord
 from discord.ext import commands
+from discord import app_commands
 
 import wavelink
 
@@ -24,7 +25,7 @@ TOKEN = os.getenv('TOKEN')
 
 class Bot(commands.Bot):
     def __init__(self) -> None:
-        intents: discord.Intents = discord.Intents.default()
+        intents: discord.Intents = discord.Intents.all()
         intents.message_content = True
 
         discord.utils.setup_logging(level=logging.INFO)
@@ -67,6 +68,7 @@ class Bot(commands.Bot):
 
 
 bot: Bot = Bot()
+_logger = logging.getLogger(__name__)
 
 
 @bot.command()
@@ -129,6 +131,14 @@ async def play(ctx: commands.Context, *, query: str) -> None:
     except discord.HTTPException:
         pass
 
+@bot.command()
+async def sync(ctx: commands.Context):
+    try:
+        synced = await bot.tree.sync()
+        _logger.info(f"synced {len(synced)} commands")
+    except Exception as e:
+        _logger.error(e)
+
 
 @bot.command()
 async def skip(ctx: commands.Context) -> None:
@@ -153,6 +163,81 @@ async def nightcore(ctx: commands.Context) -> None:
     await player.set_filters(filters)
 
     await ctx.message.add_reaction("\u2705")
+
+#TODO:: Maybe just check if filters are not default and reset on original method "def nightcore()"
+@bot.command()
+async def defaultfilters(ctx: commands.Context) -> None:
+    """reset the filter to a standard style."""
+    player: wavelink.Player = cast(wavelink.Player, ctx.voice_client)
+    if not player:
+        return
+
+    filters: wavelink.Filters = player.filters
+    filters.timescale.reset()
+    await player.set_filters(filters)
+
+    await ctx.message.add_reaction("\u2705")
+
+
+@bot.tree.command(name="test")
+async def test(interaction : discord.Interaction):
+    await interaction.response.send_message("This works")
+
+
+@bot.tree.command(name="play")
+@app_commands.describe(query = "query")
+async def slash_play(interaction : discord.Interaction, query:str):
+
+    player: wavelink.Player
+    player = cast(wavelink.Player, interaction.guild.voice_client) 
+
+    if not player:
+        try:
+            player = await interaction.user.voice.channel.connect(cls=wavelink.Player, self_deaf=True) # type: ignore
+        except AttributeError:
+            await interaction.response.send_message("Please join a voice channel first before using this command.")
+            return
+        except discord.ClientException:
+            await interaction.response.send_message("I was unable to join this voice channel. Please try again.")
+            return
+
+    # Turn on AutoPlay to enabled mode.
+    # enabled = AutoPlay will play songs for us and fetch recommendations...
+    # partial = AutoPlay will play songs for us, but WILL NOT fetch recommendations...
+    # disabled = AutoPlay will do nothing...
+    player.autoplay = wavelink.AutoPlayMode.enabled
+
+    # Lock the player to this channel...
+    if not hasattr(player, "home"):
+        player.home = interaction.user.voice.channel
+    elif player.home != interaction.user.voice.channel:
+        await interaction.response.send_message(f"You can only play songs in {player.home.mention}, as the player has already started there.")
+        return
+
+    # This will handle fetching Tracks and Playlists...
+    # Seed the doc strings for more information on this method...
+    # If spotify is enabled via LavaSrc, this will automatically fetch Spotify tracks if you pass a URL...
+    # Defaults to YouTube for non URL based queries...
+    tracks: wavelink.Search = await wavelink.Playable.search(query)
+    if not tracks:
+        await interaction.response.send_message(f"{interaction.user.mention} - Could not find any tracks with that query. Please try again.")
+        return
+
+    if isinstance(tracks, wavelink.Playlist):
+        # tracks is a playlist...
+        added: int = await player.queue.put_wait(tracks)
+        await interaction.response.send_message(f"Added the playlist **`{tracks.name}`** ({added} songs) to the queue.")
+    else:
+        track: wavelink.Playable = tracks[0]
+        await player.queue.put_wait(track)
+        await interaction.response.send_message(f"Added **`{track}`** to the queue.")
+
+    if not player.playing:
+        # Play now since we aren't playing anything...
+        await player.play(player.queue.get(), volume=30)
+
+
+    await interaction.response.send_message(f"This works {query}")
 
 
 @bot.command(name="toggle", aliases=["pause", "resume"])
