@@ -15,13 +15,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 TOKEN = os.getenv('TOKEN')
-# lavalink = lava.create_node(
-#     host=os.getenv('HOST'),
-#     port=os.getenv('PORT'),
-#     password=os.getenv('PASSWORD'),
-#     user_id=os.getenv('USER_ID'),
-# )
-
 
 class Bot(commands.Bot):
     def __init__(self) -> None:
@@ -153,9 +146,44 @@ async def disconnect(ctx: commands.Context) -> None:
 
 #------------------------------------------------------------------------# Slash commands
 
-@bot.tree.command(name="test2")
+@bot.tree.command(name="test6")
 async def test(interaction : discord.Interaction):
     await interaction.response.send_message("This works")
+
+@bot.tree.command(name="toggle_pause_or_resume")
+async def s_pause_resume(interaction : discord.Interaction):
+
+    player = cast(wavelink.Player, interaction.guild.voice_client)
+    if not player:
+        return
+
+    await player.pause(not player.paused)
+
+    await interaction.response.send_message("toggled pause/resume")
+
+@bot.tree.command(name="custom_sound_controls")
+@app_commands.describe(pitch = "pitch")
+@app_commands.describe(speed = "speed")
+@app_commands.describe(rate = "rate")
+async def s_play(interaction : discord.Interaction, pitch:int = 1,speed:int = 1,rate:int = 1):
+    player = cast(wavelink.Player, interaction.guild.voice_client)
+
+    filters: wavelink.Filters = player.filters
+    filters.timescale.set(pitch=pitch, speed=speed, rate=rate)
+    await player.set_filters(filters)
+
+    await interaction.response.send_message(f"Pitch : {pitch}, speed : {speed}, Rate : {rate}")
+
+@bot.tree.command(name="nightcore")
+async def nightcore(interaction : discord.Interaction):
+
+    player = cast(wavelink.Player, interaction.guild.voice_client)
+
+    filters: wavelink.Filters = player.filters
+    filters.timescale.set(pitch=1.2, speed=1.2, rate=1)
+    await player.set_filters(filters)
+
+    await interaction.response.send_message("switching to nightcore")
 
 @bot.tree.command(name="sync")
 async def s_sync(interaction : discord.Interaction):
