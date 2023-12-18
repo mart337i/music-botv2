@@ -107,7 +107,7 @@ and start up the lvalink server:
 java -jar Lavalink.jar
 ```
 ## Java (Optinal)
-you might run into some issues with the java version. I am currently this with an ubuntu server and Java 17
+you might run into some issues with the java version. I am currently running this, with an ubuntu server and Java 17
 
 ### Installing Java 17 on Ubuntu
 
