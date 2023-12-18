@@ -63,6 +63,15 @@ class Bot(commands.Bot):
 bot: Bot = Bot()
 _logger = logging.getLogger(__name__)
 
+@bot.event
+async def on_voice_state_update(member, before, after):
+    voice_state = member.guild.voice_client
+    if voice_state is None:
+        return 
+
+    if len(voice_state.channel.members) == 1:
+        await voice_state.disconnect()
+
 
 @bot.command()
 async def sync(ctx: commands.Context):
@@ -168,7 +177,7 @@ async def s_pause_resume(interaction : discord.Interaction):
 @app_commands.describe(pitch = "pitch")
 @app_commands.describe(speed = "speed")
 @app_commands.describe(rate = "rate")
-async def s_play(interaction : discord.Interaction, pitch:int = 1,speed:int = 1,rate:int = 1):
+async def sc_play(interaction : discord.Interaction, pitch:int = 1,speed:int = 1,rate:int = 1):
     """
     Control the following variables:
     pitch,
@@ -239,10 +248,23 @@ async def s_skip(interaction : discord.Interaction):
 
     await interaction.response.send_message(f"skipped {song_name}")
 
+@bot.tree.command(name="np")
+async def s_np(interaction : discord.Interaction):
+    """
+    Display the current song playing
+    """
+    player : wavelink.Player = cast(wavelink.Player, interaction.guild.voice_client)
+
+    if not player:
+        return
+    
+    await interaction.response.send_message(f"Currently playing: {player.current.title}")
+
 
 @bot.tree.command(name="play")
 @app_commands.describe(query = "query")
-async def s_play(interaction : discord.Interaction, query:str):
+@app_commands.describe(autoplay = "autoplay")
+async def s_play(interaction : discord.Interaction, query:str, autoplay:bool):
     """
         Play a song from youtube or soundcloud
     """
@@ -264,7 +286,10 @@ async def s_play(interaction : discord.Interaction, query:str):
     # enabled = AutoPlay will play songs for us and fetch recommendations...
     # partial = AutoPlay will play songs for us, but WILL NOT fetch recommendations...
     # disabled = AutoPlay will do nothing...
-    player.autoplay = wavelink.AutoPlayMode.enabled
+    if autoplay == True:
+        player.autoplay = wavelink.AutoPlayMode.enabled
+    else:
+        player.autoplay = wavelink.AutoPlayMode.disabled
 
     # Lock the player to this channel...
     if not hasattr(player, "home"):
