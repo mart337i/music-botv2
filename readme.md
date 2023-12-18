@@ -19,12 +19,16 @@ This repository contains the code for a Discord music bot using `discord.py`, `w
    ```
 3. Set up a `.env` file with your Discord bot token and other necessary variables.
 
+4. Setup application.yml
+
+5. Get Lavalink server : `lavalink.jar`
+
 ## Configuration
 
 - Edit the `.env` file to include your bot's token and other required API keys.
 - Configure the command prefix and intents in the bot's initialization.
 
-```
+```.env
 TOKEN = "<Discord apikey>"
 
 HOST="<Application Ap>"
@@ -34,6 +38,62 @@ URI=<http://HOST:PORT>
 USER_ID=<some id> # just give it 123
 
 ```
+### Application.yml
+ Edit the `.env` file 
+
+```
+server: # REST and WS server
+  port: 2333 # same as in .env
+  address: 127.0.0.1 # same as in .env
+spring:
+  main:
+    banner-mode: log
+lavalink:
+  server:
+    password: "youshallnotpass"
+    sources:
+      youtube: true
+      bandcamp: true
+      soundcloud: true
+      twitch: true
+      vimeo: true
+      mixer: true
+      http: true
+      local: false
+    bufferDurationMs: 400
+    youtubePlaylistLoadLimit: 6 # Number of pages at 100 each
+    youtubeSearchEnabled: true
+    soundcloudSearchEnabled: true
+    gc-warnings: true
+
+metrics:
+  prometheus:
+    enabled: false
+    endpoint: /metrics
+
+sentry:
+  dsn: ""
+#  tags:
+#    some_key: some_value
+#    another_key: another_value
+
+logging:
+  file:
+    max-history: 30
+    max-size: 1GB
+  path: ./logs/
+
+  level:
+    root: INFO
+    lavalink: INFO
+```
+
+### Get the Lavalink server
+you can get the server from the following link: 
+`https://github.com/lavalink-devs/Lavalink/releases`
+
+you will just need the `Lavalink.jar` file
+
 
 ## Running the Bot
 
@@ -42,6 +102,43 @@ Run the bot using:
 ```
 python main.py
 ```
+and start up the lvalink server:
+```
+java -jar Lavalink.jar
+```
+## Java (Optinal)
+you might run into some issues with the java version. I am currently this with an ubuntu server and Java 17
+
+### Installing Java 17 on Ubuntu
+
+#### Open a Terminal
+You can do this by pressing Ctrl + Alt + T on your keyboard.
+
+#### Update Package Index
+```bash
+sudo apt update
+```
+
+#### Install Java 17
+You can install the OpenJDK version of Java 17, which is the open-source variant of the JDK.
+```bash
+sudo apt install openjdk-17-jdk
+```
+
+#### Verify Installation
+After installation, you can verify the Java version with:
+```bash
+java -version
+```
+This command should show Java 17 in the output.
+
+#### Set Java 17 as Default (if necessary)
+If you have multiple Java versions installed and want to set Java 17 as default, use:
+```bash 
+sudo update-alternatives --config java
+```
+A selection list of installed Java versions will appear. Enter the number corresponding to Java 17 to set it as default.
+
 
 ## Commands
 
