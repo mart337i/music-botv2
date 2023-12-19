@@ -38,7 +38,7 @@ URI=<http://HOST:PORT>
 
 ```
 ### Application.yml
- Edit the `.env` file 
+ Edit the `Application.yml` file 
 
 ```
 server: # REST and WS server
