@@ -155,7 +155,7 @@ async def disconnect(ctx: commands.Context) -> None:
 
 #------------------------------------------------------------------------# Slash commands
 
-@bot.tree.command(name="test")
+@bot.tree.command(name="test2")
 async def test(interaction : discord.Interaction):
     await interaction.response.send_message("This works")
 
@@ -264,7 +264,7 @@ async def s_np(interaction : discord.Interaction):
 @bot.tree.command(name="play")
 @app_commands.describe(query = "query")
 @app_commands.describe(autoplay = "autoplay")
-async def s_play(interaction : discord.Interaction, query:str, autoplay:bool):
+async def s_play(interaction : discord.Interaction, query:str, autoplay:bool = False):
     """
         Play a song from youtube or soundcloud
     """
@@ -297,6 +297,10 @@ async def s_play(interaction : discord.Interaction, query:str, autoplay:bool):
     elif player.home != interaction.user.voice.channel:
         await interaction.response.send_message(f"You can only play songs in {player.home.mention}, as the player has already started there.")
         return
+    
+    filters: wavelink.Filters = player.filters
+    filters.timescale.set(pitch=1, speed=1, rate=1)
+    await player.set_filters(filters)
 
     # This will handle fetching Tracks and Playlists...
     # Seed the doc strings for more information on this method...
