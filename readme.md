@@ -1,7 +1,7 @@
 
 # Discord Music Bot
 
-This repository contains the code for a Discord music bot using `discord.py`, `wavelink`, and other libraries. The bot provides various functionalities like playing music, managing playlists, and customizing playback.
+This repository contains the code for a Discord music bot using `discord.py`, `wavelink`,`Lavalink` and other libraries. The bot provides various functionalities like playing music, managing playlists, and customizing playback.
 
 ## Features
 
@@ -31,15 +31,14 @@ This repository contains the code for a Discord music bot using `discord.py`, `w
 ```.env
 TOKEN = "<Discord apikey>"
 
-HOST="<Application Ap>"
+HOST="<Application IP>"
 PORT=<port>
 PASSWORD=<youshallnotpass>
 URI=<http://HOST:PORT>
-USER_ID=<some id> # just give it 123
 
 ```
 ### Application.yml
- Edit the `.env` file 
+ Edit the `Application.yml` file 
 
 ```
 server: # REST and WS server
@@ -164,10 +163,6 @@ A selection list of installed Java versions will appear. Enter the number corres
 - `/np`: Show now playing song.
 - `/play`: Play a song from a given query.
 
-## Contributing
-
-Contributions are welcome! Please read the contribution guidelines before submitting pull requests.
-
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
@@ -175,5 +170,6 @@ This project is licensed under the [MIT License](LICENSE).
 ## Acknowledgments
 
 - Thanks to the `discord.py` community for support and resources.
-- Special thanks to the `wavelink` library for providing audio streaming capabilities.
+- Special thanks to the `wavelink` library.
+- A big thanks to the creators of `Lavalink`.
 
