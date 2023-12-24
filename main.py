@@ -258,7 +258,7 @@ async def s_np(interaction : discord.Interaction):
     if not player:
         return
     
-    await interaction.response.send_message(f"Currently playing: {player.current.title}")
+    await interaction.response.send_message(f"Currently playing: {player.current.title} - {player.current.uri}")
 
 
 @bot.tree.command(name="play")
@@ -289,7 +289,7 @@ async def s_play(interaction : discord.Interaction, query:str, autoplay:bool = F
     if autoplay == True:
         player.autoplay = wavelink.AutoPlayMode.enabled
     else:
-        player.autoplay = wavelink.AutoPlayMode.disabled
+        player.autoplay = wavelink.AutoPlayMode.partial
 
     # Lock the player to this channel...
     if not hasattr(player, "home"):
