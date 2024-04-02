@@ -28,7 +28,7 @@ class Bot(commands.Bot):
         nodes = [wavelink.Node(uri=os.getenv('URI'), password=os.getenv('PASSWORD'))]
 
         # cache_capacity is EXPERIMENTAL. Turn it off by passing None
-        await wavelink.Pool.connect(nodes=nodes, client=self, cache_capacity=100)
+        await wavelink.Pool.connect(nodes=nodes, client=self, cache_capacity=None)
 
     async def on_ready(self) -> None:
         logging.info(f"Logged in: {self.user} | {self.user.id}")
@@ -280,7 +280,7 @@ async def s_play(interaction : discord.Interaction, query:str, autoplay:bool = F
             return
         except discord.ClientException:
             await interaction.response.send_message("I was unable to join this voice channel. Please try again.")
-            return
+            return    
 
     # Turn on AutoPlay to enabled mode.
     # enabled = AutoPlay will play songs for us and fetch recommendations...
@@ -318,7 +318,7 @@ async def s_play(interaction : discord.Interaction, query:str, autoplay:bool = F
     else:
         track: wavelink.Playable = tracks[0]
         await player.queue.put_wait(track)
-        await interaction.response.send_message(f"Added **`{track}`** to the queue.")
+        await interaction.response.send_message(f"Added **`{track}`** to the queue. If nothing happends use soundcloud instead")
 
     if not player.playing:
         # Play now since we aren't playing anything...
